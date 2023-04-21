@@ -3,9 +3,9 @@ import numpy as np
 import images4 as images3
 import cv2
 import math
-import phase
-import movement as moves
-import IandD
+from defs import phase
+from defs import movement as moves
+from defs import IandD
 def shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,CON_PID):
     global H_fil
     global Hue

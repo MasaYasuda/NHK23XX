@@ -26,6 +26,7 @@ import set_X
 Hue=19
 Hue_wide=2
 pole_num=80
+ONOOF=0
 checkdef=[0,0,0]
 typeofnow=0
 Target=[0]
@@ -37,7 +38,11 @@ def Hue_center_def(X):
     global checkdef
     Hue=X
     checkdef[0]=1
-
+"""
+def ON_OFF_def(X):
+    global ONOOF
+    ONOOF=X
+"""
 def Hue_wide_def(X):
     global Hue_wide
     global checkdef
@@ -61,11 +66,11 @@ def go_def(X):
 def targets(event,x,y,flags,param):
     global stats
     global Target
-    global Target_type
+    global Target_Type
     global typeofnow
 
     if event==cv2.EVENT_LBUTTONDOWN:    
-        Target,Target_type=lock_on.lock_on(stats[1:],Target,Target_type,typeofnow,x,y)
+        Target,Target_Type=lock_on.lock_on(stats[1:],Target,Target_Type,typeofnow,x,y)
 
 
 
@@ -77,11 +82,6 @@ pipe = rs.pipeline()
 profile = pipe.start(conf)
 cnt = 0
 
-#H補正用画像
-#画質変更で落ちるならここ！
-img_Hfil=cv2.imread("./programs/images/H_filter.png")
-h,w=img_Hfil.shape[:2]
-H_fil=H_c.change_H(h,w)
 
 
 
@@ -89,6 +89,13 @@ H_fil=H_c.change_H(h,w)
 cv2.namedWindow("view1", cv2.WINDOW_NORMAL)
 cv2.resizeWindow("view1", 640, 480)
 
+"""
+cv2.createTrackbar("ON/OFF",
+                   "view1",
+                    0,
+                    1,
+                    ON_OFF_def)
+"""
 cv2.createTrackbar("Hue_center",
                    "view1",
                     19,
@@ -127,6 +134,17 @@ cv2.setMouseCallback("view1",
 mode=0
 CON_PID_control=[0,0,0]
 
+frames = pipe.wait_for_frames()
+color_frame = frames.get_color_frame()
+img = np.asanyarray(color_frame.get_data())
+
+h,w=img.shape[:2]
+H_fil=H_c.change_H(h,w)
+
+
+
+
+
 while True:
     if mode ==0:
         while True:
@@ -140,13 +158,15 @@ while True:
             #表示
             cv2.imshow("view1",img2)
             #print("End1")
-            if cv2.waitKey(10) == 27:
+            if cv2.waitKey==27:
                 break
             cv2.destroyAllWindows
-            
+
             #コントロール
             ###
 
+        break
+    
 
     if mode==1:
         
@@ -162,7 +182,7 @@ while True:
             #表示
             cv2.imshow("view1",img2)
             #print("End1")
-            if cv2.waitKey(10) == 27:
+            if cv2.waitKey==27:
                 break
             cv2.destroyAllWindows
             
@@ -173,6 +193,8 @@ while True:
                 
                 mode=set_X.shot_jyunbi(Center_X,Center_Y,pipe,border_Phase,CON_PID)
                 print("Go shoot!")
+                
+        break
                 
             
 
@@ -188,7 +210,7 @@ while True:
             #表示
             cv2.imshow("view1",img2)
             #print("End1")
-            if cv2.waitKey(10) == 27:
+            if cv2.waitKey==27:
                 break
             cv2.destroyAllWindows
 
